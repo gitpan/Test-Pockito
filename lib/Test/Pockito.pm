@@ -3,12 +3,13 @@ package Test::Pockito;
 use strict;
 use warnings;
 
-use Carp;
+use Test::Pockito::DefaultMatcher;
 
+use Carp;
 use Class::MOP;
 use Class::MOP::Class;
 
-our $VERSION = "0.01";
+our $VERSION = "0.02";
 
 =head1 NAME
 
@@ -218,14 +219,14 @@ will cause the anonymous sub to be called twice.  If this occurs a warning will 
 
 =item new(package [, matcher])
 
-Instanciate Pockito.  package is a prefix name for the namespace for your mocks.  It would be rude to assume every nacemspace will be valid.  You do that work.  matcher is a reference to a sub to check for equality of a mocked call.   See default_call_match for more information on how to implement this subroutine.
+Instanciate Pockito.  package is a prefix name for the namespace for your mocks.  It would be rude to assume every nacemspace will be valid.  You do that work.  matcher is a reference to a sub to check for equality of a mocked call.   See Test::Pockito::DefaultMatcher::default_call_match for more information on how to implement this subroutine.
 
 =cut 
 
 sub new {
     my $package   = shift;
     my $namespace = shift;
-    my $matcher   = shift || \&Test::Pockito::default_call_match;
+    my $matcher   = shift || \&Test::Pockito::DefaultMatcher::default_call_match;
     return bless {
         '_calls'       => {},
         'namespace'    => $namespace,
@@ -321,7 +322,9 @@ then will record one instance of the combination of method and parameters return
 	print $db_mock->is_married("bob");
 	print $db_mock->is_married("bob");
 
-will print 321. I've told my mock to return 2 and then 1 for my two consecutive calls with parameter bob.  Alice, she's alone in her call expectations, until she gets married.
+will print 321. I've told my mock to return 2 and then 1 for my two consecutive calls with parameter bob.  Alice, she's alone in her call expectations, until she gets married.  
+
+Note well, within the default matcher, Test::Pockito::DefaultMatcher, there are ways to match anything that's defined instead of specific values, or any array reference and so on.  See that documentation for details.
 
 =cut
 
@@ -450,37 +453,6 @@ sub expected_calls {
     return $self->{'_calls'};
 }
 
-=item default_call_match( $package, $method, \@params_found, \@params_expected )
-
-This is the default matching metchanism for Pockito though you are at will to implement your own.  Passing an implementation with this signature overrides the matching sub.  The default implementation does not use $package nor $method, but they will be of use if you have multiple, different ways to define parameters as equal.
-
-=cut
-
-sub default_call_match {
-    my $package = shift;
-    my $method  = shift;
-
-    my $param_found_ref    = shift;
-    my $param_expected_ref = shift;
-
-    my (@left)  = @{$param_found_ref};
-    my (@right) = @{$param_expected_ref};
-
-    if ( $#left < $#right ) {
-        (@left)  = @{$param_expected_ref};
-        (@right) = @{$param_found_ref};
-    }
-
-    foreach my $y ( 0 .. $#left ) {
-        my $l = $left[$y]  || 0;
-        my $r = $right[$y] || 0;
-        if ( $l ne $r ) {
-            return 0;
-        }
-    }
-
-    return 1;
-}
 
 =back
 
@@ -494,6 +466,10 @@ exussum@gmail.com
 Spencer Portee
 CPAN ID: EXUSSUM
 exussum@gmail.com
+
+=head1 SOURCE
+
+http://bitbucket.org/exussum/pockito/
 
 =head1 COPYRIGHT
 

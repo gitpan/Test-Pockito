@@ -134,7 +134,8 @@ METHODS
         Instanciate Pockito. package is a prefix name for the namespace for
         your mocks. It would be rude to assume every nacemspace will be
         valid. You do that work. matcher is a reference to a sub to check
-        for equality of a mocked call. See default_call_match for more
+        for equality of a mocked call. See
+        Test::Pockito::DefaultMatcher::default_call_match for more
         information on how to implement this subroutine.
 
     mock(module, [excluded1, excluded2, ..., excluded-n])
@@ -216,19 +217,14 @@ METHODS
                 my ( $one, $two, $three ) = { 'Foo' }{ 'bar' }[0]->{'params'};
                 my ( $four, $five, $six ) = { 'Foo' }{ 'bar' }[0]->{'result'};
 
-    default_call_match( $package, $method, \@params_found, \@params_expected
-    )
-        This is the default matching metchanism for Pockito though you are
-        at will to implement your own. Passing an implementation with this
-        signature overrides the matching sub. The default implementation
-        does not use $package nor $method, but they will be of use if you
-        have multiple, different ways to define parameters as equal.
-
 SUPPORT
     exussum@gmail.com
 
 AUTHOR
     Spencer Portee CPAN ID: EXUSSUM exussum@gmail.com
+
+SOURCE
+    http://bitbucket.org/exussum/pockito/
 
 COPYRIGHT
     This program is free software licensed under the...

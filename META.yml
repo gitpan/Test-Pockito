@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Test-Pockito
-version:            0.01
+version:            0.02
 abstract:           ~
 author:
     - Spencer Portee (exussum@gmail.com)
@@ -11,8 +11,10 @@ configure_requires:
 build_requires:
     ExtUtils::MakeMaker:  0
 requires:
-    Class::MOP:    1.02
-    Test::Simple:  0.44
+    Class::MOP:           1.02
+    IO::String:           1.08
+    Scalar::Util::Reftype:  0.4
+    Test::Simple:         0.44
 no_index:
     directory:
         - t
